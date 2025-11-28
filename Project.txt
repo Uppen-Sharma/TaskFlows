@@ -1,0 +1,174 @@
+### 1. The Life of a Token (Authentication Flow)
+
+This is the security backbone of your application. Here is the step-by-step journey of your JWT (JSON Web Token) from creation to destruction.
+
+A. Generation (Login)
+
+- Trigger: User clicks "Login" on the frontend.
+- File: `backend/controllers/authController.js`
+- Process:
+  1.  The backend receives the username and password.
+  2.  It verifies the password using `bcrypt`.
+  3.  If valid, it calls `user.getSignedJwtToken()` defined in `User.js`.
+  4.  Action: Uses the `jsonwebtoken` library to create a string containing the User's ID (`_id`) signed with your secret key (`JWT_SECRET`).
+  5.  Result: This token string is sent back to the Frontend.
+
+B. Storage 
+- File: `frontend/src/features/auth/authSlice.jsx`
+- Process:
+  1.  The frontend receives the token in the JSON response.
+  2.  Redux: It saves the token into the global Redux state (`state.auth.currentUser`).
+  3.  Persistence: It saves the token to the browser's Local Storage (`localStorage.setItem('currentUser', ...)`). This ensures the user stays logged in even if they refresh the page.
+
+C. Verification 
+
+- Trigger: User tries to load the Dashboard (`GET /api/data/tasks`).
+- File: `backend/middleware/authMiddleware.js`
+- Process:
+  1.  The frontend attaches the token to the request header: `Authorization: Bearer eyJhbG...`.
+  2.  The `protect` middleware intercepts this request before it reaches the controller.
+  3.  Check 1 (Blacklist): It queries MongoDB's `BlacklistToken` collection. Is this specific token string there? If yes $\rightarrow$ Reject (401).
+  4.  Check 2 (Integrity): It uses `jwt.verify()` to check if the token signature is valid and not expired.
+  5.  Access Granted: It decodes the User ID from the token, finds the user in the DB, attaches it to `req.user`, and lets the request pass.
+
+D. Invalidation (Logout)
+
+- Trigger: User clicks "Logout".
+- File: `backend/controllers/authController.js` (logoutUser)
+- Process:
+  1.  The frontend sends the token to the backend _before_ deleting it locally.
+  2.  The backend takes that token string and saves it into the `BlacklistToken` collection along with its expiration date.
+  3.  Result: Even if a hacker stole that token 5 minutes ago, they can no longer use it because the `protect` middleware will find it in the blacklist and block it.
+
+### 2. How Filtering Works (The Logic Layer)
+
+Your application filters data in two stages: Security Filtering (Backend) and View Filtering (Frontend).
+
+Stage 1: Backend Security (Enforced)
+
+- File: `backend/controllers/taskController.js` (`getTasks`)
+- Mechanism:
+  - If User: The code _forces_ a query filter: `{ assignedTo: req.user._id }`. This guarantees a standard user can never fetch data that doesn't belong to them, no matter what they try. It also hides `closed` tasks.
+  - If Manager: The code allows fetching all tasks, but listens for an optional `?assignedUser=ID` query parameter to filter by a specific employee.
+
+Stage 2: Frontend Convenience (UI)
+
+- File: `frontend/src/hooks/useTaskDashboard.jsx`
+- Mechanism:
+  - When you click a filter pill (e.g., "In Progress"), the hook updates a state variable (`filters`).
+  - It triggers a new API call: `GET /tasks?status=inprocess`.
+  - Proposal Logic: In `AdminDashboard.jsx`, there is a special client-side filter. It fetches _everything_, but then splits the array into `proposedTasks` (hidden from the main board) and `activeTasks` (shown on the board).
+
+### 3. File-by-File Deep Dive
+
+BACKEND (The Brain)
+
+1.  `server.js`
+
+    - What: The entry point.
+    - Why: Starts the Express server, connects to DB, applies global middleware (CORS, Rate Limiting), and mounts the routes.
+
+2.  [cite_start]`db.js` [cite: 1]
+
+    - What: Database connection logic.
+    - Why: Keeps the main server file clean by isolating the Mongoose connection code.
+
+3.  `logger.js`
+
+    - What: A utility to write logs to a file (`api_audit.jsonl`).
+    - Why: Compliance and debugging. It ensures every action is recorded permanently on disk.
+
+4.  `seeder.js`
+
+    - What: A script to delete all data and repopulate it with sample users/tasks.
+    - Why: Essential for testing. It lets you reset the app to a "clean slate" instantly.
+
+5.  `authRoutes.js` / `dataRoutes.js`
+
+    - What: The traffic directors.
+    - Why: They map URLs (like `/login` or `/tasks`) to specific Controller functions and attach the necessary Middleware (Protect, Manager, Audit).
+
+6.  `authController.js`
+
+    - What: Handles Login, Register, and Logout.
+    - Why: Contains the business logic for verifying credentials and issuing tokens.
+
+7.  `taskController.js`
+
+    - What: The core business logic.
+    - Why: Handles creating tasks (with the "Proposed" vs "In Process" logic), starting/stopping timers, and calculating time remaining.
+
+8.  `authMiddleware.js`
+
+    - What: The security guard.
+    - Why: Protects routes. Checks if a token is valid and if it's blacklisted. Also checks if a user is a Manager.
+
+9.  `auditMiddleware.js`
+
+    - What: The security camera.
+    - Why: Logs who did what. It manually decodes tokens to find the "User ID" even before the security check runs, so failed attempts are also logged.
+
+10. `User.js` / `Task.js` / `BlacklistToken.js`
+    - What: Mongoose Models (Database Schemas).
+    - Why: Define the structure of your data (e.g., "A task must have a name", "A token must have an expiry date").
+
+FRONTEND (The Face)
+
+1.  `main.jsx`
+
+    - What: React entry point.
+    - Why: Injects the Redux Store (`Provider`) so the whole app can access state.
+
+2.  `App.jsx`
+
+    - What: The Router.
+    - Why: Decides which page to show based on the URL. Handles redirects (e.g., if not logged in -> go to Login).
+
+3.  `store.jsx`
+
+    - What: The Brain of the Frontend.
+    - Why: Holds the global state (User info, Tasks list). Includes the special "Logout" logic that wipes data when you sign out.
+
+4.  `authSlice.jsx`
+
+    - What: Authentication State Manager.
+    - Why: Handles talking to the Login API and saving the token to LocalStorage.
+
+5.  `taskSlice.jsx`
+
+    - What: Task State Manager.
+    - Why: Handles fetching tasks, creating tasks, and sending timer updates to the server.
+
+6.  `LoginRegister.jsx`
+
+    - What: The Landing Page.
+    - Why: Provides the forms for users to sign up or sign in.
+
+7.  `UserDashboard.jsx`
+
+    - What: The standard employee view.
+    - Why: Shows only assigned tasks, allows "Proposing" tasks, and starting timers.
+
+8.  `AdminDashboard.jsx`
+
+    - What: The manager command center.
+    - Why: Shows ALL tasks, allows creating tasks directly, and includes the "Review Proposals" workflow.
+
+9.  `TaskItem.jsx`
+
+    - What: The Task Card component.
+    - Why: Displays the task details. It is "smart" enough to change its buttons based on who is looking at it (User vs Manager).
+
+10. `TaskForm.jsx`
+
+    - What: The form for creating/proposing tasks.
+    - Why: It is modular. If an Admin uses it, it shows the "Team Selector". If a User uses it, it hides that section.
+
+11. `useTaskDashboard.jsx`
+
+    - What: Custom Hook.
+    - Why: Contains the shared logic (Filtering, Search, Stats Calculation) so we don't have to write it twice for User and Admin dashboards.
+
+12. `timeUtils.jsx`
+    - What: Time converter.
+    - Why: Translates the database's "1500 minutes" into the human-readable "1d 1h 0m".
