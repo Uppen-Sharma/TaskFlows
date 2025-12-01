@@ -155,31 +155,6 @@ Data (Protected)
     PATCH /api/data/tasks/:id/start-timer - Start Timer
 
     PATCH /api/data/tasks/:id/stop-timer - Stop Timer
-
-📂 Project Structure
-
-TaskFlows/
-├── taskflows-backend/
-│   ├── config/         # DB Connection
-│   ├── controllers/    # Logic for Auth & Tasks
-│   ├── middleware/     # Protect, Manager, Audit Log
-│   ├── models/         # Mongoose Schemas (User, Task, Blacklist)
-│   └── routes/         # API Route Definitions
-│
-└── taskflows-frontend/
-    ├── src/
-    │   ├── app/        # Redux Store
-    │   ├── components/ # Shared UI (Header, Footer, Inputs)
-    │   ├── features/   # Redux Slices & Feature Components
-    │   │   ├── auth/   # Login/Register Forms
-    │   │   ├── tasks/  # Task Cards, Forms, Modals
-    │   │   └── users/  # User Lists
-    │   ├── hooks/      # Custom Hooks (useTaskDashboard)
-    │   ├── lib/        # API Service Layers
-    │   └── pages/      # Admin & User Dashboards
-
-📄 License
-
-This project is licensed under the MIT License.
+    
 
 Built with ❤️ by Binay Uppen Sharma
