@@ -12,7 +12,7 @@ router.post("/register", registerUser);
 // login user
 router.post("/login", loginUser);
 
-// logout user
+// logout user protected route
 router.post("/logout", logoutUser);
 
 module.exports = router;
