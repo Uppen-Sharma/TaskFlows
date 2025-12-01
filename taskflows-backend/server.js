@@ -10,6 +10,11 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const dataRoutes = require("./routes/dataRoutes");
 
+//https module
+const https = require("https");
+const fs = require("fs");
+const path = require("path");
+
 // load env
 dotenv.config();
 
@@ -52,9 +57,25 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something broke!");
 });
 
-// start server
-const PORT = process.env.PORT || 5000;
-app.listen(
-  PORT,
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
-);
+// HTTPS Configuration Implemented
+try {
+  // Load SSL Certificates
+  const sslOptions = {
+    key: fs.readFileSync(path.join(__dirname, "key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
+  };
+
+  const PORT = process.env.PORT || 5000;
+
+  https.createServer(sslOptions, app).listen(PORT, () => {
+    console.log(
+      `Secure Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+    );
+  });
+} catch (error) {
+  console.error("SSL Certificate Error: Could not find key.pem or cert.pem");
+  console.error(
+    "Please run 'openssl' command to generate them in this folder."
+  );
+  process.exit(1);
+}

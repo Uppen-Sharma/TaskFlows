@@ -1,7 +1,7 @@
 // Use the correct backend URL for the users endpoint
-const API_URL_USERS = "http://localhost:5000/api/data/users";
+const API_URL_USERS = "https://localhost:5000/api/data/users";
 
-// Helper function to get the JWT token from localStorage (Copied from taskService or ideally placed in a common utility)
+// Helper function to get the JWT token from localStorage
 const getAuthHeader = () => {
   const user = JSON.parse(localStorage.getItem("currentUser"));
   if (user && user.token) {
