@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ usernameOrEmail, password }, { rejectWithValue }) => {
     try {
-      localStorage.removeItem("currentUser"); // clear old users data
+      localStorage.removeItem("currentUser"); // clear existing user
 
       const response = await fetch(`${API_AUTH_URL}/login`, {
         method: "POST",
