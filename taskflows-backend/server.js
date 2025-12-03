@@ -1,16 +1,20 @@
+// imports
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-// const helmet = require("helmet");
-// const xss = require("xss-clean");
 const rateLimit = require("express-rate-limit");
-// const mongoSanitize = require("express-mongo-sanitize");
-// const hpp = require("hpp");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const dataRoutes = require("./routes/dataRoutes");
 
-//https module
+//  security middleware imports
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const mongoSanitize = require("express-mongo-sanitize");
+const hpp = require("hpp");
+//
+
+// https
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
@@ -27,11 +31,19 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// optional
-// app.use(helmet());
-// app.use(xss());
-// app.use(mongoSanitize());
-// app.use(hpp());
+//  Security Middleware
+// Set security headers
+app.use(helmet());
+
+// Prevent XSS attacks
+app.use(xss());
+
+// Prevent MongoDB Operator Injection
+app.use(mongoSanitize());
+
+// Prevent HTTP Parameter Pollution
+app.use(hpp());
+//
 
 // rate limit
 const limiter = rateLimit({
@@ -48,7 +60,7 @@ app.use("/api/data", dataRoutes);
 
 // test route
 app.get("/", (req, res) => {
-  res.send("TaskFlows API is running...");
+  res.send("TaskFlows API is running securely (HTTPS)...");
 });
 
 // error handler
@@ -57,9 +69,8 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something broke!");
 });
 
-// HTTPS Configuration Implemented
+//  HTTPS server setup
 try {
-  // Load SSL Certificates
   const sslOptions = {
     key: fs.readFileSync(path.join(__dirname, "key.pem")),
     cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
