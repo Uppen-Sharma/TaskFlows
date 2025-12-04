@@ -1,5 +1,6 @@
+import { API_BASE_URL } from "../../config";
 // Use the correct backend URL for the users endpoint
-const API_URL_USERS = "https://localhost:5000/api/data/users";
+const API_URL_USERS = `${API_BASE_URL}/api/data/users`;
 
 // Helper function to get the JWT token from localStorage
 const getAuthHeader = () => {

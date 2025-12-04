@@ -1,5 +1,6 @@
+import { API_BASE_URL } from "../../config";
 // Use the correct backend URL for data endpoints
-const API_URL_BASE = "https://localhost:5000/api/data/tasks";
+const API_URL_BASE = `${API_BASE_URL}/api/data/tasks`;
 
 // Helper function to get the JWT token from localStorage
 const getAuthHeader = () => {

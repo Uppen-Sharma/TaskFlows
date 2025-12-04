@@ -70,23 +70,28 @@ app.use((err, req, res, next) => {
 });
 
 //  HTTPS server setup
-try {
-  const sslOptions = {
-    key: fs.readFileSync(path.join(__dirname, "key.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
-  };
+const PORT = process.env.PORT || 5000;
 
-  const PORT = process.env.PORT || 5000;
-
-  https.createServer(sslOptions, app).listen(PORT, () => {
-    console.log(
-      `Secure Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
-    );
+// LOGIC: Check if we are in production (Render) or local
+if (process.env.NODE_ENV === "production") {
+  //  PRODUCTION MODE (Render)
+  // Render handles SSL/HTTPS automatically before the request hits your app.
+  app.listen(PORT, () => {
+    console.log(`Production Server running on port ${PORT}`);
   });
-} catch (error) {
-  console.error("SSL Certificate Error: Could not find key.pem or cert.pem");
-  console.error(
-    "Please run 'openssl' command to generate them in this folder."
-  );
-  process.exit(1);
+} else {
+  //  LOCAL MODE (Your machine)
+  try {
+    const sslOptions = {
+      key: fs.readFileSync(path.join(__dirname, "key.pem")),
+      cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
+    };
+
+    https.createServer(sslOptions, app).listen(PORT, () => {
+      console.log(`Secure Local Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Local SSL Error: key.pem or cert.pem missing.");
+    process.exit(1);
+  }
 }
