@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 const UserCreateTaskModal = ({ users, onCreateTask, onClose }) => {
   const { currentUser } = useSelector((state) => state.auth); // get logged-in user
   const manager = users.find((u) => u.role === "manager"); // find manager
-  const managerId = manager ? manager.id : null; // manager ID or null
+  const managerId = manager ? manager.id : null;
 
   // Handle creating task and close modal
   const handleCreateTask = (taskData) => {
@@ -14,8 +14,8 @@ const UserCreateTaskModal = ({ users, onCreateTask, onClose }) => {
       console.error("Cannot create task: No manager found."); // fail-safe
       return;
     }
-    onCreateTask(taskData, managerId); // call parent handler
-    onClose(); // close modal
+    onCreateTask(taskData, managerId);
+    onClose();
   };
 
   return (

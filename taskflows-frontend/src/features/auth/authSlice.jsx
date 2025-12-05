@@ -75,7 +75,7 @@ export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   } catch (error) {
     console.error("Logout logging failed", error);
   }
-  localStorage.removeItem("currentUser"); // clear local storage
+  localStorage.removeItem("currentUser");
   return null;
 });
 

@@ -1,5 +1,4 @@
 import { API_BASE_URL } from "../../config";
-// Use the correct backend URL for the users endpoint
 const API_URL_USERS = `${API_BASE_URL}/api/data/users`;
 
 // Helper function to get the JWT token from localStorage
@@ -22,5 +21,5 @@ const handleResponse = async (response) => {
 //  UPDATED getUsers
 export const getUsers = () =>
   fetch(API_URL_USERS, {
-    headers: getAuthHeader(), // <-- ADDED AUTH HEADER
+    headers: getAuthHeader(),
   }).then(handleResponse);

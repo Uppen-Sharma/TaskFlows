@@ -72,10 +72,9 @@ app.use((err, req, res, next) => {
 //  HTTPS server setup
 const PORT = process.env.PORT || 5000;
 
-// LOGIC: Check if we are in production (Render) or local
+// production or local
 if (process.env.NODE_ENV === "production") {
-  //  PRODUCTION MODE (Render)
-  // Render handles SSL/HTTPS automatically before the request hits your app.
+  //  PRODUCTION MODE (Deployed)
   app.listen(PORT, () => {
     console.log(`Production Server running on port ${PORT}`);
   });

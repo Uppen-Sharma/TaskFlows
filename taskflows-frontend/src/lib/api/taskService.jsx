@@ -1,5 +1,4 @@
 import { API_BASE_URL } from "../../config";
-// Use the correct backend URL for data endpoints
 const API_URL_BASE = `${API_BASE_URL}/api/data/tasks`;
 
 // Helper function to get the JWT token from localStorage
@@ -26,22 +25,12 @@ const handleResponse = async (response) => {
   return response.json();
 };
 
-/**
- * Fetches tasks with optional filtering, searching, and sorting via URL query parameters.
- * @param {object} filters - Object containing status, assignedUser, search, and sort fields.
- */
 export const getTasks = async (filters = {}) => {
-  // Build the query string from the filters object
   const params = new URLSearchParams();
   Object.keys(filters).forEach((key) => {
     if (filters[key]) {
-      // Only append if value is not null/empty/undefined
-      // Backend expects 'search' query for the name/description filter
       const queryKey = key === "name" || key === "description" ? "search" : key;
-
-      // Backend expects 'assignedUser' query for the user filter
       const finalKey = queryKey === "assignedUser" ? "assignedUser" : queryKey;
-
       params.append(finalKey, filters[key]);
     }
   });
@@ -88,7 +77,7 @@ export const updateTaskById = async (taskId, updatedFields) => {
   return handleResponse(response);
 };
 
-// --- NEW SERVER-SIDE TIME TRACKING API CALLS ---
+//  New timer and baseline adjustment APIs
 
 export const startTimerAPI = async (taskId) => {
   const response = await fetch(`${API_URL_BASE}/${taskId}/start-timer`, {
