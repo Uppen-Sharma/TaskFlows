@@ -1,14 +1,14 @@
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import bgImage from "../../assets/images/bkg30.jpg";
 
-// layout wrapper
 const DashboardLayout = ({ children }) => {
   return (
     <div
       className="min-h-screen w-full flex flex-col relative"
       style={{
-        backgroundImage: `url("/bkg30.jpg")`,
+        backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
