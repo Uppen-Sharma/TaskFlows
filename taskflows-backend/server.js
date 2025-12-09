@@ -1,4 +1,3 @@
-// imports
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -7,90 +6,78 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const dataRoutes = require("./routes/dataRoutes");
 
-//  security middleware imports
+// Security Middleware Imports
 const helmet = require("helmet");
 const xss = require("xss-clean");
 const mongoSanitize = require("express-mongo-sanitize");
 const hpp = require("hpp");
-//
 
-// https
-const https = require("https");
-const fs = require("fs");
-const path = require("path");
-
-// load env
+// Load env vars
 dotenv.config();
 
-// connect db
+// Connect to Database
 connectDB();
 
 const app = express();
 
-// core middleware
+// --- CORS Configuration ---
+// Allow Localhost and your future Vercel URL
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.FRONTEND_URL, // Defined in Render Dashboard later
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        // Optional: Log blocked origins for debugging
+        // console.log("Blocked by CORS:",WZ origin);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
+
+// Core Middleware
 app.use(express.json());
-app.use(cors());
 
-//  Security Middleware
-// Set security headers
+// Security Middleware
 app.use(helmet());
-
-// Prevent XSS attacks
 app.use(xss());
-
-// Prevent MongoDB Operator Injection
 app.use(mongoSanitize());
-
-// Prevent HTTP Parameter Pollution
 app.use(hpp());
-//
 
-// rate limit
+// Rate Limiting
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
+  windowMs: 10 * 60 * 1000, // 10 minutes
   max: 100,
 });
 app.use(limiter);
 
-// auth routes
+// Routes
 app.use("/api/auth", authRoutes);
-
-// data routes
 app.use("/api/data", dataRoutes);
 
-// test route
+// Health Check Route
 app.get("/", (req, res) => {
-  res.send("TaskFlows API is running securely (HTTPS)...");
+  res.send("TaskFlows API is running...");
 });
 
-// error handler
+// Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
 
-//  HTTPS server setup
+// Server Setup
 const PORT = process.env.PORT || 5000;
 
-// production or local
-if (process.env.NODE_ENV === "production") {
-  //  PRODUCTION MODE (Deployed)
-  app.listen(PORT, () => {
-    console.log(`Production Server running on port ${PORT}`);
-  });
-} else {
-  //  LOCAL MODE (Your machine)
-  try {
-    const sslOptions = {
-      key: fs.readFileSync(path.join(__dirname, "key.pem")),
-      cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
-    };
-
-    https.createServer(sslOptions, app).listen(PORT, () => {
-      console.log(`Secure Local Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Local SSL Error: key.pem or cert.pem missing.");
-    process.exit(1);
-  }
-}
+// Simplified Start (Render handles HTTPS automatically)
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
