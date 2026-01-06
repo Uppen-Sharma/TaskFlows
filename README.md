@@ -4,7 +4,7 @@ TaskFlows is a robust, full-stack Task Management System built with the MERN sta
 
 
 
-🌟 Key Features
+🌟 Key Feature
 
 🔐 Authentication & Security
 

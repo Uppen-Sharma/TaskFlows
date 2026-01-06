@@ -5,7 +5,7 @@ Core Framework & Architecture
 
     Composition Pattern: Instead of building one massive component, you build small pieces (like TaskItem, DurationInput) and combine them to make pages.
 
-Vite & HMR (Hot Module Replacement): You specifically asked about HMR.
+Vite & HMR (Hot Module Replacement): You specifically asked about HMR..
 
     What is HMR? Normally, when you change code, the browser has to reload the entire page (refresh), resetting all your state (e.g., clearing the text you just typed in a form).
 

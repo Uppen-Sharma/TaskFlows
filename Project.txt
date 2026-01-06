@@ -7,7 +7,7 @@ A. Generation (Login)
 - Trigger: User clicks "Login" on the frontend.
 - File: `backend/controllers/authController.js`
 - Process:
-  1.  The backend receives the username and password.
+  1.  The backend receives the username and password..
   2.  It verifies the password using `bcrypt`.
   3.  If valid, it calls `user.getSignedJwtToken()` defined in `User.js`.
   4.  Action: Uses the `jsonwebtoken` library to create a string containing the User's ID (`_id`) signed with your secret key (`JWT_SECRET`).
