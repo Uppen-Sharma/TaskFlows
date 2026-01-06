@@ -1,6 +1,3 @@
-// Vite sets import.meta.env.MODE to 'production' during build
-const isProduction = import.meta.env.MODE === "production";
-
-export const API_BASE_URL = isProduction
-  ? "https://YOUR-RENDER-APP-NAME.onrender.com" // deploying backend URL
-  : "https://localhost:5000"; // local HTTPS URL
+// If Vercel provides a custom URL, use it. Otherwise, default to local.
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
