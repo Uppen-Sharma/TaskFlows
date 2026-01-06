@@ -46,7 +46,6 @@ Time tracking is calculated server-side to prevent manipulation while remaining 
 - MongoDB & Mongoose
 - JWT Authentication + BCrypt
 - Custom Validation Middleware
-- MSW (Mock Service Worker)
 
 ---
 
@@ -80,8 +79,8 @@ Code snippet
 
 Seed the database with test users and data:
 Bash
-
 npm run seed
+
 Start the backend server:
 Bash
 npm run dev
@@ -126,9 +125,7 @@ Tasks
 🧪 Testing
 
 To run frontend tests:
-
 Bash
-
 cd taskflows-frontend
 npm run test
 
