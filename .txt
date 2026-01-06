@@ -1,0 +1,120 @@
+1. Frontend Engineering (React Ecosystem)
+Core Framework & Architecture
+
+    React 18 & Virtual DOM: Your app uses React 18. React keeps a lightweight copy of the actual DOM in memory called the Virtual DOM. When you update a task status, React compares this virtual copy with the previous version ("diffing") and only updates the specific part of the real screen that changed, rather than reloading the whole page. This makes the UI snappy.
+
+    Composition Pattern: Instead of building one massive component, you build small pieces (like TaskItem, DurationInput) and combine them to make pages.
+
+Vite & HMR (Hot Module Replacement): You specifically asked about HMR.
+
+    What is HMR? Normally, when you change code, the browser has to reload the entire page (refresh), resetting all your state (e.g., clearing the text you just typed in a form).
+
+    How it works in TaskFlows: With HMR, Vite monitors your files. If you change the color of the "Start Timer" button in your CSS, Vite injects that new style directly into the running application without refreshing the page. Your timer keeps running, and your form input stays filled.
+
+Environment Configuration (import.meta.env): This allows you to set variables (like your API URL) that change based on where the app runs (e.g., localhost for dev vs. vercel.app for production) without changing the code.
+
+Routing (React Router v6):
+
+    Nested Routes: This allows you to have a parent layout (like the Dashboard sidebar) that stays persistent while the child content (Task List vs. User Profile) changes.
+
+Dynamic Params (:id): This handles URLs like /task/123. The :id part is dynamic, letting you load data for specific tasks.
+
+Atomic Design: This is your folder structure philosophy.
+
+    Atoms: The smallest building blocks (e.g., DurationInput - a single input field).
+
+Organisms: Complex combinations of atoms (e.g., TaskForm - a collection of inputs and buttons).
+
+Pages: The final view the user sees (e.g., UserDashboard).
+
+React Hooks & Logic
+
+    Standard Hooks: You use useState for local data (like form inputs) and useEffect for side effects (like updating the document title).
+
+Performance Hooks: useMemo and useCallback prevent expensive calculations from running every time a component re-renders. For example, filtering the task list is only recalculated if the list or filter changes.
+
+Custom Hooks: These are your own logic packages. useTaskTimeCalculations encapsulates all the math for the timer so your UI components don't have to do algebra.
+
+State Management (Redux Toolkit)
+
+    Store Configuration: The "Single Source of Truth." Your configureStore combines all data (auth, tasks, users) into one giant JavaScript object that the whole app can access.
+
+Slices: These divide that giant object into manageable sections. authSlice handles login data, while taskSlice handles task data.
+
+Async Thunks: Redux is synchronous (instant), but APIs are asynchronous (slow). createAsyncThunk handles the waiting states: pending (show spinner), fulfilled (show data), and rejected (show error).
+
+Immer-based Mutation: In standard Redux, you can never change state directly (you must copy it first). Immer lets you write code that looks like you are mutating state directly, while it handles the safe copying behind the scenes.
+
+Styling & UX
+
+    Glassmorphism: This is the visual style of your app—translucent backgrounds (bg-white/10) and blurs (backdrop-blur-xl) that make elements look like frosted glass.
+
+2. Backend Engineering (Node.js & Express)
+Runtime & Architecture
+
+    Event Loop & Non-blocking I/O: Node.js is single-threaded but non-blocking.
+
+    Meaning: If 100 users ask for data at once, Node doesn't freeze the server waiting for the database. It sends the request to the database and keeps listening for new users. When the database answers, the Event Loop picks it back up and sends the response.
+
+MVC Architecture: You separate your code into Models (Database schemas), Views (API JSON responses), and Controllers (Logic functions like loginUser).
+
+Security Engineering
+
+    Helmet: A library that sets special HTTP headers to hide your server tech and prevent attacks like clickjacking.
+
+Rate Limiting: Prevents a user (or bot) from crashing your server by limiting them to, say, 100 requests per 15 minutes.
+
+Audit Logging: Your app physically writes a log file (api_audit.jsonl) every time an API is hit. This creates a permanent paper trail for security auditing.
+
+Authentication
+
+    JWT Strategy: Instead of the server remembering every logged-in user (sessions), the server gives the user a signed "badge" (Token). The user shows this badge (Bearer Token) with every request. The server verifies the signature (jwt.verify) to grant access.
+
+Hashing (bcryptjs): You never save passwords as plain text (e.g., "password123"). You use bcrypt to scramble them into a hash. Even if a hacker steals the database, they cannot read the passwords.
+
+3. Database (MongoDB & Mongoose)
+Data Modeling
+
+    Schemas & Strict Typing: MongoDB is schema-less (you can save anything), but Mongoose forces structure (Schemas) so your code can rely on data being consistent (e.g., a Task must have a status).
+
+Virtuals: Fields that exist in your app but not the database. For example, you might not save "fullName" in the DB, but a Virtual can combine firstName + lastName on the fly when you retrieve the user.
+
+Populate: This works like a SQL JOIN. It replaces a user ID in the task document (e.g., assignedTo: "123") with the actual user object { name: "Alice", role: "User" }.
+
+Querying & Performance
+
+    TTL Indexes (Time-To-Live): You use this for the "Token Blacklist". When a user logs out, their token goes here. The TTL index automatically deletes that token from the database after a set time (e.g., 24 hours), keeping your DB clean automatically.
+
+Geospatial Queries: If your app tracked location, $geoWithin allows you to find items inside a specific map area (like a circle or polygon).
+
+4. Testing & Quality Assurance
+
+    JSDOM: Node.js (where tests run) doesn't have a browser window or document. JSDOM simulates a browser environment inside Node so your React tests think they are running in Chrome.
+
+Integration Testing (vi.mock): This allows you to test the "User Dashboard" without actually calling the real API. You "mock" the API response to return fake data, proving the dashboard can handle that data correctly.
+
+5. DevOps & Tools
+
+    Vercel & Render:
+
+        Vercel is optimized for Frontend (React). It serves your static files worldwide super fast.
+
+Render runs your Backend (Node.js). It keeps your server running 24/7 to listen for API requests.
+
+CI/CD Concepts: Using tools like Git and ESLint ensures that every time you save code, it is version-controlled and checked for errors before it ever reaches production.
+
+6. Cloud & Identity
+
+    Azure Active Directory (Entra ID): This is enterprise-level identity management. Instead of building your own login system, you can connect your app to a company's Microsoft directory so employees login with their work email.
+
+Clerk: A simpler third-party authentication service that handles login, 2FA, and user management for you, saving you from writing all that security code yourself.
+
+TTL meaning
+
+Based on the provided document, TTL stands for Time-To-Live.
+
+It is used in two specific contexts within your application:
+
+    Session Management: It is used for Token Blacklisting. When a user logs out, their token is added to a blacklist to invalidate it.
+
+Database (MongoDB): It refers to TTL Indexes, which automatically expire and remove these blacklisted tokens from the database after a set period (Blacklist expiry). This keeps your database clean without needing manual deletion scripts.

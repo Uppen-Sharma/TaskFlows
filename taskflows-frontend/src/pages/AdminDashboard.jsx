@@ -31,7 +31,7 @@ import TaskAccordionList from "../features/tasks/components/TaskAccordionList";
 import UserList from "../features/users/components/UserList";
 import ProposalApprovalModal from "../features/tasks/components/ProposalApprovalModal";
 
-// --- GLOWING STAT STYLES ---
+// GLOWING STAT STYLES
 const ADMIN_STATUS_COLORS = {
   inProcess: {
     valueClass: "text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]",

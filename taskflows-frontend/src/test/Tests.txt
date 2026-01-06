@@ -1,0 +1,43 @@
+1. Dashboard Tests (Views)
+
+These tests ensure that the main application screens render correct data and respond to user interactions properly.
+
+| Test File                 | Source File                    | What Was Verified                                                                                                                                                                                                 |
+| --------------------------| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdminDashboard.test.jsx` | `src/pages/AdminDashboard.jsx` | (TFT-10) Confirmed that the Manager dashboard correctly calculates Total Tasks (mocked as 2), renders the employee list (Alice, Bob), and opens the Create New Task modal when the button is clicked. |
+| `UserDashboard.test.jsx`  | `src/pages/UserDashboard.jsx`  | (TFT-9) Verified that an Employee sees only their own statistics (Total Assigned, In Process) and their assigned tasks (e.g., *Fix Login Bug*).                                                               |
+
+The warning shown in `AdminDashboard` about a `value` prop without an `onChange` handler is caused by the Search Bar input.
+Because the data hook was mocked, the input became read-only during the test.
+This is a React warning only, not a test failure—the test suite still passed successfully.
+
+2. Component Tests (UI Elements)
+
+These tests validate individual UI components and their conditional behavior.
+
+| Test File                    | Source File                                           | What Was Verified                                                                                                                                           |
+| -----------------------------| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TaskItem.test.jsx`          | `src/features/tasks/components/TaskItem.jsx`          | (TFT-13) Confirmed conditional rendering of control buttons: START appears when a task is *pending*, and STOP appears when a task is *running*. |
+| `TaskEditModal.test.jsx`     | `src/features/tasks/components/TaskEditModal.jsx`     | (TFT-15) Verified that the modal opens with the correct task data pre-filled and that clicking Save submits the updated task details correctly.     |
+| `TaskAccordionList.test.jsx` | `src/features/tasks/components/TaskAccordionList.jsx` | (TFT-11) Confirmed that when filtering returns no results, a “No tasks found” message is shown instead of an empty UI.                              |
+| `LoginRegister.test.jsx`     | `src/features/auth/LoginRegister.jsx`                 | (TFT-6) Verified that users can type into Username/Password fields and toggle between Sign In and Create Account modes.                         |
+
+3. Logic & Security Tests (Core Logic)
+
+These tests validate business rules, calculations, and access control without involving UI rendering.
+
+| Test File                          | Source File                                           | What Was Verified                                                                                                                              |
+| -----------------------------------| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useTaskTimeCalculations.test.jsx` | `src/features/tasks/hooks/useTaskTimeCalculations.js` | (TFT-14) Confirmed that tasks with negative remaining time are flagged as `isTimeExpired: true` and displayed with the “(Over)” label. |
+| `authSlice.test.js`                | `src/features/auth/authSlice.js`                      | (TFT-5) Verified Redux state handling by ensuring all user data is cleared when `logoutUser` is dispatched.                                |
+| `ProtectedRoute.test.jsx`          | `src/components/common/ProtectedRoute.jsx`            | (TFT-7) Confirmed route protection by redirecting unauthenticated users attempting to access `/protected` back to the Login page.          |
+
+
+
+Your test suite demonstrates:
+
+ Correct UI rendering
+ Accurate business logic
+ Strong authentication and route protection
+ Proper Redux state management
+

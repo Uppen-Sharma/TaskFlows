@@ -24,7 +24,7 @@ const taskSchema = new mongoose.Schema(
         "onhold",
         "completed",
         "closed",
-      ], // allowed task statuses
+      ], // allowed statuses
       default: "pending", // default status
     },
 
@@ -68,8 +68,8 @@ const taskSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // add createdAt updatedAt
-    toJSON: { virtuals: true, versionKey: false }, // include virtuals
-    toObject: { virtuals: true }, // include virtuals
+    toJSON: { virtuals: true, versionKey: false }, // include virtuals in json and remove __v field(external use)
+    toObject: { virtuals: true }, // include virtuals in object(internal use)
   }
 );
 
@@ -79,9 +79,9 @@ taskSchema.virtual("id").get(function () {
 
 taskSchema.set("toJSON", {
   virtuals: true,
-  versionKey: false,
+  versionKey: false, // Removes the "__v: 0" field Mongoose adds internally
   transform: (_, ret) => {
-    delete ret._id; // hide internal id
+    delete ret._id; // // Physically removes "_id" from the JSON output
   },
 });
 

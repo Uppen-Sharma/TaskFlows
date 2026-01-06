@@ -172,3 +172,94 @@ FRONTEND (The Face)
 12. `timeUtils.jsx`
     - What: Time converter.
     - Why: Translates the database's "1500 minutes" into the human-readable "1d 1h 0m".
+
+
+1. Infrastructure & Environment
+
+Goal: Ensure the testing environment mimics a real browser.
+setup.js
+
+    Purpose: Configures the global test environment.
+    Key Functions:
+        Cleanup: Resets the DOM after every test to prevent data leaks.
+        Global Mocks: Simulates browser-specific APIs (like window.matchMedia) that don't exist in the test terminal.
+
+2. Authentication & Security
+
+Goal: Verify that the "Gatekeeper" works—users can log in, log out, and are restricted correctly.
+authSlice.test.js (Unit Logic)
+
+    What it Tests: The Redux state logic for authentication.
+    Key Scenarios:
+        Login Success: Updates state to isAuthenticated: true.
+        Logout: Clears user data and resets state to null.
+        Loading: Verifies the isLoading flag toggles correctly during API calls.
+
+LoginRegister.test.jsx (UI Interaction)
+
+    What it Tests: The user-facing Login and Registration forms.
+    Key Scenarios:
+        Rendering: Verifies input fields (Username/Password) appear.
+        Interaction: Simulates typing into fields to ensure inputs work.
+        Mode Switch: Verifies clicking "Create Account" swaps the form to Registration mode.
+
+ProtectedRoute.test.jsx (Routing Security)
+
+    What it Tests: Route protection and redirects.
+    Key Scenarios:
+        Guest Access: Ensures unauthenticated users are kicked to /login.
+        Authorized Access: Allows logged-in users to view protected pages.
+        Role Security: Redirects basic "Users" away from "Manager" pages.
+
+3. Dashboards & Data Display
+
+Goal: Verify that the main application screens render the correct data and statistics.
+UserDashboard.test.jsx
+
+    What it Tests: The main view for standard employees.
+    Key Scenarios:
+        Statistics: Verifies "Total Assigned" and "In Process" counts match the data.
+        Task List: Checks if assigned tasks (e.g., "Fix Login Bug") appear on the screen.
+        Mocking: Simulates a backend API response to test data loading.
+
+AdminDashboard.test.jsx
+
+    What it Tests: The main view for Managers/Admins.
+    Key Scenarios:
+        Identity: Checks for the "Manager Dashboard" title.
+        Global Stats: Verifies the dashboard sums up all tasks across the team.
+        User List: Checks if the employee roster is rendered.
+        Interaction: Verifies the "Create New Task" button opens the correct modal.
+
+TaskAccordionList.test.jsx
+
+    What it Tests: The reusable list container for tasks.
+    Key Scenarios:
+        Empty State: Displays "No tasks found" when the list is empty.
+        List Rendering: Renders the correct number of items when data exists.
+
+4. Business Logic & Complex Interactions
+
+Goal: Verify the "Brain" of the application—timers, math, and user actions.
+useTaskTimeCalculations.test.js (Pure Logic)
+
+    What it Tests: The custom hook responsible for time tracking math.
+    Key Scenarios:
+        Timer Status: Returns true if a start time exists.
+        Expiration: Flags isTimeExpired if remaining minutes are negative.
+        Formatting: Verifies the time string adds (Over) correctly when expired.
+
+TaskItem.test.jsx (Controls UI)
+
+    What it Tests: The individual task card and its buttons.
+    Key Scenarios:
+        Start Button: Appears only when the task is pending/paused. Verifies clicking it calls startTimer.
+        Stop Button: Appears only when the timer is running. Verifies clicking it calls stopTimer.
+
+TaskEditModal.test.jsx (Data Entry)
+
+    What it Tests: The popup window for editing and approving tasks.
+    Key Scenarios:
+        Pre-filling: Opens with the current task's name and description already filled.
+        Saving: Verifies clicking "Save" triggers the update function with new data.
+        Approvals: Verifies that "Approve" and "Reject" buttons appear if a user has requested a baseline change.

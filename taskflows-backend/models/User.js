@@ -40,7 +40,7 @@ userSchema.virtual("id").get(function () {
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next(); // skip if pass unchanged
-  const salt = await bcrypt.genSalt(10); // generate salt
+  const salt = await bcrypt.genSalt(10); // random generation of salt(password)
   this.password = await bcrypt.hash(this.password, salt); // hash pass
   next();
 });

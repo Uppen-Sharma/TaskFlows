@@ -34,7 +34,7 @@ const loginUser = async (req, res) => {
     if (isMatch) {
       // generate user token
       const token = user.getSignedJwtToken();
-      const decoded = jwt.decode(token);
+      const decoded = jwt.decode(token); //decode token to get logging info
 
       // log successful login
       logApiCall({

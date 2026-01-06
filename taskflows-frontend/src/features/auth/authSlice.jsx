@@ -18,10 +18,10 @@ export const loginUser = createAsyncThunk(
 
       if (!response.ok) {
         const errorData = await response.json();
-        return rejectWithValue(errorData.message);
+        return rejectWithValue(errorData.message); // Sends error to Redux
       }
 
-      const userData = await response.json();
+      const userData = await response.json(); // successful login
       const currentUser = {
         id: userData.id,
         name: userData.name,
@@ -31,13 +31,13 @@ export const loginUser = createAsyncThunk(
         token: userData.token,
       };
 
-      localStorage.setItem("currentUser", JSON.stringify(currentUser)); // store new user
+      localStorage.setItem("currentUser", JSON.stringify(currentUser)); // browser storage stay logged in
       return currentUser;
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
-);
+); 
 
 // register async thunk
 export const registerUser = createAsyncThunk(

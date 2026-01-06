@@ -3,9 +3,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-// protected route
+// protected route component to guard routes based on auth and role
 const ProtectedRoute = ({ children, requiredRole = null }) => {
-  // get auth state
+  // get auth state (global state)
   const { isAuthenticated, currentUser, isLoading } = useSelector(
     (state) => state.auth
   );
@@ -21,16 +21,16 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
 
   // check auth
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />; // redirect to login for unauth users
   }
 
-  // check role
+  // check role and smart redirect
   if (requiredRole && currentUser?.role !== requiredRole) {
     const targetPath = currentUser?.role === "manager" ? "/admin" : "/user";
     return <Navigate to={targetPath} replace />;
   }
 
-  // allow access
+  // allow access if all checks pass
   return children;
 };
 

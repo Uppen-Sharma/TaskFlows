@@ -5,24 +5,24 @@ const mongoose = require("mongoose");
 // convert database document to frontend format
 const mapToFrontend = (doc) => {
   if (!doc) return null;
-  const obj = doc.toObject ? doc.toObject() : doc;
-  return { ...obj, id: obj._id?.toString(), _id: undefined };
+  const obj = doc.toObject ? doc.toObject() : doc; // handle mongoose document
+  return { ...obj, id: obj._id?.toString(), _id: undefined }; // remove _id
 };
 
 // calculate updated remaining time
 const calculateRemainingTime = (task) => {
   if (!task || !task.timeTrackingStartedAt) return task.currentEstimatedTime;
-  const start = new Date(task.timeTrackingStartedAt).getTime();
-  const now = Date.now();
-  const elapsed = Math.floor((now - start) / 60000);
-  return task.currentEstimatedTime - elapsed;
+  const start = new Date(task.timeTrackingStartedAt).getTime(); // get start time in ms
+  const now = Date.now(); // current time in ms
+  const elapsed = Math.floor((now - start) / 60000); // elapsed time in minutes
+  return task.currentEstimatedTime - elapsed; // new remaining time
 };
 
 // fetch all users
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find({}).select("name username role email");
-    res.json(users.map(mapToFrontend));
+    const users = await User.find({}).select("name username role email"); // fetch limited fields
+    res.json(users.map(mapToFrontend)); // map each user to frontend format
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "User fetch error" });
@@ -32,15 +32,15 @@ const getUsers = async (req, res) => {
 // fetch tasks with filters
 const getTasks = async (req, res) => {
   try {
-    const { status, assignedUser, search, sort } = req.query;
+    const { status, assignedUser, search, sort } = req.query; // extract query params
     const query = {};
     const sortOptions = {};
-    const authenticatedUserId = new mongoose.Types.ObjectId(req.user._id);
+    const authenticatedUserId = new mongoose.Types.ObjectId(req.user._id); // get authenticated user id
 
     // restrict user to own tasks
     if (req.user.role === "user") {
-      query.assignedTo = { $in: [authenticatedUserId] };
-      query.status = { $ne: "closed" };
+      query.assignedTo = { $in: [authenticatedUserId] }; // only tasks assigned to user
+      query.status = { $ne: "closed" }; // exclude closed tasks
     } else if (req.user.role === "manager") {
       // filter by assigned user
       if (assignedUser && mongoose.Types.ObjectId.isValid(assignedUser)) {
@@ -50,22 +50,22 @@ const getTasks = async (req, res) => {
 
     // apply status filter
     if (status && status !== "all") {
-      query.status = status;
+      query.status = status; // filter by status
     }
 
     // apply search filter
     if (search)
       query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } }, // Check if name matches
+        { description: { $regex: search, $options: "i" } }, // Check if description matches
       ];
 
     // apply sorting option
-    sortOptions.sort = sort ? sort.split(",").join(" ") : "-createdAt";
+    sortOptions.sort = sort ? sort.split(",").join(" ") : "-createdAt"; // default to newest first
 
-    const tasks = await Task.find(query).sort(sortOptions.sort);
+    const tasks = await Task.find(query).sort(sortOptions.sort); // fetch tasks from database
 
-    // update remaining time values
+    // recalculate the time for any task where the timer is running
     const finalTasks = tasks.map((t) => ({
       ...mapToFrontend(t),
       currentEstimatedTime: calculateRemainingTime(t),
@@ -82,12 +82,12 @@ const getTasks = async (req, res) => {
 const createTask = async (req, res) => {
   const { name, description, assignedTo, currentEstimatedTime } = req.body;
 
-  // validate required fields
+  // Ensure name exists, someone is assigned, and time is set
   if (!name || !assignedTo?.length || currentEstimatedTime === undefined) {
     return res.status(400).json({ message: "Missing fields" });
   }
 
-  // filter valid user ids
+  // Filter the assigned IDs to make sure they are valid MongoDB IDs
   const validAssignedTo = assignedTo.filter((id) =>
     mongoose.Types.ObjectId.isValid(id)
   );
@@ -95,7 +95,7 @@ const createTask = async (req, res) => {
   try {
     const isManager = req.user.role === "manager";
 
-    // set task starting status
+    // if manger create task, set status to inprocess, else proposed
     const forcedStatus = isManager ? "inprocess" : "proposed";
 
     const task = await Task.create({
@@ -104,7 +104,7 @@ const createTask = async (req, res) => {
       initialEstimatedTime: currentEstimatedTime,
       currentEstimatedTime,
       assignedTo: validAssignedTo,
-      assignedBy: req.user._id,
+      assignedBy: req.user._id, // record who assigned the task
       status: forcedStatus,
       userSuggestedBaseline: null,
       timeTrackingStartedAt: null,
@@ -242,7 +242,7 @@ const updateTask = async (req, res) => {
 const adjustTaskTime = async (req, res) => {
   const { newTimeInMinutes, isBaselineRequest } = req.body;
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findById(req.params.id); // routes param id
     if (!task) return res.status(404).json({ message: "Task not found" });
 
     const isManager = req.user.role === "manager";
