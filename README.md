@@ -72,12 +72,12 @@ npm install
 Create a .env file in the taskflows-backend root directory:
 Code snippet
 
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/taskflowsdb
-JWT_SECRET=YOUR_SECURE_SECRET_KEY
-JWT_EXPIRE=30d
-ENABLE_AUDIT_LOGS=true
-FRONTEND_URL=http://localhost:5173
+- PORT=5000
+- MONGO_URI=mongodb://localhost:27017/taskflowsdb
+- JWT_SECRET=YOUR_SECURE_SECRET_KEY
+- JWT_EXPIRE=30d
+- ENABLE_AUDIT_LOGS=true
+- FRONTEND_URL=http://localhost:5173
 
 Seed the database with test users and data:
 Bash
@@ -94,9 +94,9 @@ npm run dev
 Open a new terminal, navigate to the frontend folder, and start the app:
 Bash
 
-cd taskflows-frontend
-npm install
-npm run dev
+- cd taskflows-frontend
+- npm install
+- npm run dev
 
 🧪 Test Credentials (Seeded)
 Role	Name	Email	Password	Capability
