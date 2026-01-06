@@ -65,7 +65,6 @@ cd TaskFlows
 
 Navigate to the backend folder and install dependencies:
 Bash
-
 cd taskflows-backend
 npm install
 
@@ -83,10 +82,8 @@ Seed the database with test users and data:
 Bash
 
 npm run seed
-
 Start the backend server:
 Bash
-
 npm run dev
 
 3. Frontend Setup
@@ -99,6 +96,7 @@ Bash
 - npm run dev
 
 🧪 Test Credentials (Seeded)
+
 Role	Name	Email	Password	Capability
 - Manager	Sara Connor	sara@taskflow.com	pass123	Approve proposals, manage tasks
 - User	Alice Johnson	alice@taskflow.com	pass123	Propose tasks, manage timers
@@ -128,6 +126,7 @@ Tasks
 🧪 Testing
 
 To run frontend tests:
+
 Bash
 
 cd taskflows-frontend
@@ -142,4 +141,4 @@ Key Test Files:
     UserDashboard.test.jsx
 
 
-<p align="center"> Built with ❤️ by <strong>Binay Uppen Sharma</strong> </p>
+<p align="center"> Built by <strong>Binay Uppen Sharma</strong> </p>
