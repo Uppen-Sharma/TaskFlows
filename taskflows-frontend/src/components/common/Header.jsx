@@ -20,7 +20,7 @@ const Header = () => {
   return (
     <header
       className="flex justify-between items-center py-4 px-6 md:px-12 
-					w-full sticky top-0 z-30 
+					w-full sticky top-0 z-40 
 					text-white backdrop-blur-lg border-b border-white/10 
 					bg-linear-to-r from-gray-700/20 via-gray-600/10 to-gray-700/20 
 					shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300"
@@ -57,13 +57,14 @@ const Header = () => {
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 
-					bg-red-500/50 hover:bg-linear-to-r hover:from-red-600 hover:to-red-700 
-					text-white font-semibold py-2 px-4 rounded-xl 
-					transition-all duration-300 shadow-md hover:shadow-lg 
-					hover:scale-105 active:scale-95 text-sm border border-red-400/30"
+					bg-red-500/50 hover:bg-linear-to-r hover:from-red-600 hover:to-red-500 
+					text-white px-5 py-2 rounded-full 
+					shadow-[0_0_15px_rgba(239,68,68,0.4)] 
+					hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] 
+					transition-all duration-300 transform hover:-translate-y-0.5"
         >
-          <FaSignOutAlt className="text-sm" />
-          <span className="hidden sm:inline">Logout</span>
+          <span className="font-bold tracking-wide">Logout</span>
+          <FaSignOutAlt />
         </button>
       </div>
     </header>
