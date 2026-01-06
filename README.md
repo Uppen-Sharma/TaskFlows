@@ -1,160 +1,68 @@
-TaskFlows 🚀
+This README is designed to be professional, visually structured, and technically detailed. It incorporates the specific architectural patterns found in your code (like the Blacklist Token strategy, Audit Logging, and MSW testing).
 
-TaskFlows is a robust, full-stack Task Management System built with the MERN stack. It features role-based access control (RBAC), real-time time tracking, a sophisticated proposal workflow, and a premium "High-Contrast Glass" UI.
+You can copy the raw markdown code below directly into your README.md file.
+🚀 TaskFlows
+A High-Performance, Secure Task Management Ecosystem
 
+TaskFlows is a sophisticated task management platform built to bridge the gap between simple to-do lists and complex enterprise workflows. It features a "High-Contrast Glassmorphism" UI, precise time-budgeting engines, and a security-first backend architecture utilizing Audit Logs and Token Blacklisting.
+🌟 Core Concepts & Architecture
+1. The "Proposal" Workflow
 
+Unlike standard CRUD apps, TaskFlows enforces a hierarchy. Standard users cannot clutter the active task board.
 
-🌟 Key Feature
+    Flow: User clicks "Propose Task" → Task created with status proposed → Manager receives notification in ProposalApprovalModal → Manager Approves (Active) or Rejects (Deleted).
 
-🔐 Authentication & Security
+    Code Reference: See UserCreateTaskModal.jsx and AdminDashboard.jsx.
 
-    Secure Login/Register: JWT-based authentication with bcrypt password hashing.
+2. The Time Engine
 
-    Secure Logout: Token blacklisting mechanism using Redis/MongoDB TTL to instantly invalidate tokens upon logout.
+Time tracking is calculated server-side to prevent manipulation, but rendered client-side for immediate feedback.
 
-    Role-Based Access Control (RBAC): Distinct dashboards and permissions for Users and Managers.
+    Logic: Remaining Time = Current Estimate - (Current Time - Start Time).
 
-    Audit Logging: Tracks every API request, user context, and payload in api_audit.jsonl for security compliance.
+    Visuals: The UI glows Emerald when active, Amber when on hold, and Red when the time budget is exceeded ("Over").
 
-📋 Workflow & Task Management
+    Code Reference: useTaskTimeCalculations.jsx (Frontend) and taskController.js (Backend).
 
-    Proposal System: Standard users cannot create tasks directly; they must Propose a task. Managers review proposals via a dedicated modal to Accept or Reject them.
+3. Security First
 
-    Time Budgeting: Tasks use a precise Days : Hours : Minutes time budget system, converted automatically to minutes for database storage.
+    Audit Logging: Every critical API action (POST/PUT/DELETE) is sanitized (passwords redacted) and logged to api_audit.jsonl for compliance.
 
-    Real-Time Timer: Users can Start and Stop timers on their tasks. The system tracks exact timestamps and calculates remaining time dynamically.
+    Token Blacklisting: Logout isn't just client-side. The JWT is added to a MongoDB BlacklistToken collection with a TTL index to prevent replay attacks.
 
-    Baseline Requests: Users can request adjustments to the estimated time, which Managers must approve.
-
-🎨 UI/UX
-
-    Premium Design: A "High-Contrast Glassmorphism" theme using Tailwind CSS with deep blurs, glowing accents, and custom scrollbars.
-
-    Responsive Dashboards: Separate, optimized views for Users (Task execution) and Managers (Team oversight).
-
-    Interactive Components: Custom multi-select dropdowns, digital time tumblers, and animated stat cards.
+    Defense: Implements helmet, xss-clean, hpp, and express-mongo-sanitize.
 
 🛠️ Tech Stack
+Frontend (Client)
 
-Frontend
+    Framework: React 18 (Vite)
 
-    React (Vite): Fast, modern UI library.
+    State Management: Redux Toolkit (Slices for Auth, Tasks, Users)
 
-    Redux Toolkit: Global state management for Auth, Tasks, and Users.
+    Styling: Tailwind CSS (Custom "Glass" theme, Backdrop Blur, Animations)
 
-    Tailwind CSS: Utility-first styling.
+    Routing: React Router v6 with ProtectedRoute wrappers
 
-    React Router: Client-side routing with protected guards.
+    Testing: Vitest + React Testing Library
 
-    React Hot Toast: Beautiful notifications.
+Backend (API)
 
-Backend
+    Runtime: Node.js & Express
 
-    Node.js & Express: RESTful API architecture.
+    Database: MongoDB & Mongoose
 
-    MongoDB & Mongoose: NoSQL database with advanced schema validation.
+    Authentication: JWT (JSON Web Tokens) + BCrypt
 
-    JWT (JSON Web Tokens): Stateless authentication.
+    Validation: Custom Middleware + Mongoose Schema Validation
 
-    HTTPS (Local): Configured to run securely with self-signed certificates in development.
+    Testing: MSW (Mock Service Worker) for API interception
 
-🚀 Getting Started
-
+🚀 Installation & Setup
 Prerequisites
 
     Node.js (v16+)
 
-    MongoDB (Local or Atlas)
-
-    Git
+    MongoDB (Running locally on port 27017 or Atlas URI)
 
 1. Clone the Repository
-
 Bash
-
-git clone https://github.com/Uppen-Sharma/TaskFlows.git
-cd TaskFlows
-
-2. Backend Setup
-
-Navigate to the backend folder and install dependencies:
-Bash
-
-cd taskflows-backend
-npm install
-
-Environment Variables: Create a .env file in taskflows-backend/:
-Code snippet
-
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/taskflowsdb
-JWT_SECRET=your_super_secret_key_here
-JWT_EXPIRE=30d
-NODE_ENV=development
-
-SSL Certificates (For HTTPS): Run this in the backend root to generate local keys:
-Bash
-
-openssl req -nodes -new -x509 -keyout key.pem -out cert.pem -days 365
-
-Seed the Database: Populate the DB with sample Users and Tasks (Recommended):
-Bash
-
-npm run seed
-
-Start the Server:
-Bash
-
-npm run dev
-
-Server runs on https://localhost:5000
-
-3. Frontend Setup
-
-Open a new terminal, navigate to the frontend folder:
-Bash
-
-cd taskflows-frontend
-npm install
-
-Start React:
-Bash
-
-npm run dev
-
-App runs on http://localhost:5173
-
-🧪 Testing & Credentials
-
-The Seeder creates the following default accounts:
-Role	Email	Password	Usage
-Manager	sara@taskflow.com	pass123	Full control, create tasks, approve proposals.
-User	alice@taskflow.com	pass123	Propose tasks, track time, request baseline changes.
-User	bob@taskflow.com	pass123	Standard employee account.
-
-📡 API Endpoints
-
-Auth
-
-    POST /api/auth/register - Create new user
-
-    POST /api/auth/login - Login & Get Token
-
-    POST /api/auth/logout - Invalidate Token
-
-Data (Protected)
-
-    GET /api/data/tasks - Fetch tasks (Filtered by Role)
-
-    POST /api/data/tasks - Create Task (Manager) or Propose Task (User)
-
-    PATCH /api/data/tasks/:id - Update Status
-
-    DELETE /api/data/tasks/:id - Delete Task (Manager Only)
-
-    PATCH /api/data/tasks/:id/start-timer - Start Timer
-
-    PATCH /api/data/tasks/:id/stop-timer - Stop Timer
-    
-
-Built with ❤️ by Binay Uppen Sharma
