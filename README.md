@@ -2,74 +2,75 @@
 
 ### A High-Performance, Secure Task Management Ecosystem
 
-**TaskFlows** is a sophisticated task management platform built to bridge the gap between simple to-do lists and complex enterprise workflows. It features a "High-Contrast Glassmorphism" UI, precise time-budgeting engines, and a security-first backend architecture utilizing Audit Logs and Token Blacklisting.
+**TaskFlows** is a sophisticated task management platform built to bridge the gap between simple to-do lists and complex enterprise workflows. It features a **High-Contrast Glassmorphism UI**, precise time-budgeting engines, and a **security-first backend architecture** utilizing Audit Logs and Token Blacklisting.
 
 ---
 
 ## 🌟 Core Concepts & Architecture
 
-### 1. The "Proposal" Workflow
+### 1. The Proposal Workflow
+Unlike standard CRUD apps, TaskFlows enforces a hierarchical workflow. Standard users cannot clutter the active task board.
 
-Unlike standard CRUD apps, TaskFlows enforces a hierarchy. Standard users cannot clutter the active task board.
-
-- **Flow:** User clicks "Propose Task" → Task created with status `proposed` → Manager receives notification in `ProposalApprovalModal` → Manager **Approves** (Active) or **Rejects** (Deleted).
-- **Code Reference:** See `UserCreateTaskModal.jsx` and `AdminDashboard.jsx`.
+- **Flow:** User clicks **Propose Task** → Task created with status `proposed` →  
+  Manager receives notification in `ProposalApprovalModal` →  
+  Manager **Approves** (Active) or **Rejects** (Deleted)
+- **Code Reference:** `UserCreateTaskModal.jsx`, `AdminDashboard.jsx`
 
 ### 2. The Time Engine
-
-Time tracking is calculated server-side to prevent manipulation, but rendered client-side for immediate feedback.
+Time tracking is calculated server-side to prevent manipulation while remaining reactive on the client.
 
 - **Logic:** `Remaining Time = Current Estimate - (Current Time - Start Time)`
-- **Visuals:** UI glows **Emerald** when active, **Amber** when on hold, and **Red** when the time budget is exceeded ("Over").
-- **Code Reference:** `useTaskTimeCalculations.jsx` (Frontend) and `taskController.js` (Backend).
+- **Visual Indicators:** - 🟢 **Emerald:** Active  
+  - 🟠 **Amber:** Paused  
+  - 🔴 **Red:** Time exceeded
+- **Code Reference:** `useTaskTimeCalculations.jsx` (Frontend), `taskController.js` (Backend)
 
-### 3. Security First
-
-- **Audit Logging:** Every critical API action (POST/PUT/DELETE) is sanitized (passwords redacted) and logged to `api_audit.jsonl` for compliance.
-- **Token Blacklisting:** Logout invalidates JWT by storing it in a MongoDB `BlacklistToken` collection with a TTL index to prevent replay attacks.
-- **Defense:** Uses `helmet`, `xss-clean`, `hpp`, and `express-mongo-sanitize`.
+### 3. Security First Architecture
+- **Audit Logging:** All critical API actions (POST / PUT / DELETE) are sanitized and logged to `api_audit.jsonl`
+- **Token Blacklisting:** JWTs are invalidated on logout using a MongoDB `BlacklistToken` collection with TTL indexing
+- **Security Middleware:** `helmet`, `xss-clean`, `hpp`, `express-mongo-sanitize`
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend (Client)
-
-- **Framework:** React 18 (Vite)
-- **State Management:** Redux Toolkit
-- **Styling:** Tailwind CSS (Glassmorphism theme)
-- **Routing:** React Router v6 with `ProtectedRoute`
-- **Testing:** Vitest + React Testing Library
+- React 18 (Vite)
+- Redux Toolkit
+- Tailwind CSS (Glassmorphism theme)
+- React Router v6 (`ProtectedRoute`)
+- Vitest + React Testing Library
 
 ### Backend (API)
-
-- **Runtime:** Node.js & Express
-- **Database:** MongoDB & Mongoose
-- **Authentication:** JWT + BCrypt
-- **Validation:** Custom Middleware + Schema Validation
-- **Testing:** MSW (Mock Service Worker)
+- Node.js & Express
+- MongoDB & Mongoose
+- JWT Authentication + BCrypt
+- Custom Validation Middleware
+- MSW (Mock Service Worker)
 
 ---
 
 ## 🚀 Installation & Setup
 
 ### Prerequisites
-
 - Node.js v16+
 - MongoDB (Local or Atlas)
 
-### 1. Clone the Repository
-
+### 1. Clone Repository
 ```bash
-git clone https://github.com/Uppen-Sharma/TaskFlows.git
+git clone [https://github.com/Uppen-Sharma/TaskFlows.git](https://github.com/Uppen-Sharma/TaskFlows.git)
 cd TaskFlows
-
+```
 2. Backend Setup
+
+Navigate to the backend folder and install dependencies:
+Bash
 
 cd taskflows-backend
 npm install
 
-Create .env file:
+Create a .env file in the taskflows-backend root directory:
+Code snippet
 
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/taskflowsdb
@@ -78,15 +79,20 @@ JWT_EXPIRE=30d
 ENABLE_AUDIT_LOGS=true
 FRONTEND_URL=http://localhost:5173
 
-Seed database:
+Seed the database with test users and data:
+Bash
 
 npm run seed
 
-Start server:
+Start the backend server:
+Bash
 
 npm run dev
 
 3. Frontend Setup
+
+Open a new terminal, navigate to the frontend folder, and start the app:
+Bash
 
 cd taskflows-frontend
 npm install
@@ -94,12 +100,9 @@ npm run dev
 
 🧪 Test Credentials (Seeded)
 Role	Name	Email	Password	Capability
-Manager	Sara Connor	sara@taskflow.com
-	pass123	Approve proposals, manage tasks
-User	Alice Johnson	alice@taskflow.com
-	pass123	Propose tasks, manage timers
-User	Bob Williams	bob@taskflow.com
-	pass123	Standard user
+Manager	Sara Connor	sara@taskflow.com	pass123	Approve proposals, manage tasks
+User	Alice Johnson	alice@taskflow.com	pass123	Propose tasks, manage timers
+User	Bob Williams	bob@taskflow.com	pass123	Standard user
 📡 API Reference
 Authentication
 
@@ -123,10 +126,13 @@ Tasks
 
 🧪 Testing
 
+To run frontend tests:
+Bash
+
 cd taskflows-frontend
 npm run test
 
-Key tests:
+Key Test Files:
 
     authSlice.test.js
 
@@ -135,6 +141,7 @@ Key tests:
     UserDashboard.test.jsx
 
 📂 Project Structure
+Plaintext
 
 TaskFlows/
 ├── taskflows-backend/
@@ -158,4 +165,5 @@ TaskFlows/
 📜 License
 
 MIT License. See LICENSE for details.
-<p align="center">Built with ❤️ by <strong>Binay Uppen Sharma</strong></p> ```
+
+<p align="center"> Built with ❤️ by <strong>Binay Uppen Sharma</strong> </p>
