@@ -100,9 +100,9 @@ Bash
 
 🧪 Test Credentials (Seeded)
 Role	Name	Email	Password	Capability
-Manager	Sara Connor	sara@taskflow.com	pass123	Approve proposals, manage tasks
-User	Alice Johnson	alice@taskflow.com	pass123	Propose tasks, manage timers
-User	Bob Williams	bob@taskflow.com	pass123	Standard user
+- Manager	Sara Connor	sara@taskflow.com	pass123	Approve proposals, manage tasks
+- User	Alice Johnson	alice@taskflow.com	pass123	Propose tasks, manage timers
+- User	Bob Williams	bob@taskflow.com	pass123	Standard user
 📡 API Reference
 Authentication
 
