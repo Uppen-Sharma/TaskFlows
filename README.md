@@ -1,6 +1,3 @@
-This README is designed to be professional, visually structured, and technically detailed. It incorporates the specific architectural patterns found in your code (like the Blacklist Token strategy, Audit Logging, and MSW testing).
-
-You can copy the raw markdown code below directly into your README.md file.
 🚀 TaskFlows
 A High-Performance, Secure Task Management Ecosystem
 
