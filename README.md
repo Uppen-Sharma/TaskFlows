@@ -140,30 +140,5 @@ Key Test Files:
 
     UserDashboard.test.jsx
 
-📂 Project Structure
-Plaintext
-
-TaskFlows/
-├── taskflows-backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── utils/
-│   └── server.js
-└── taskflows-frontend/
-    ├── src/
-    │   ├── app/
-    │   ├── components/
-    │   ├── features/
-    │   ├── hooks/
-    │   ├── pages/
-    │   └── test/
-    └── vite.config.js
-
-📜 License
-
-MIT License. See LICENSE for details.
 
 <p align="center"> Built with ❤️ by <strong>Binay Uppen Sharma</strong> </p>
