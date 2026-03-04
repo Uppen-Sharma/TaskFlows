@@ -47,7 +47,7 @@ const LoginRegister = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     dispatch(
-      loginUser({ usernameOrEmail: loginUsername, password: loginPassword })
+      loginUser({ usernameOrEmail: loginUsername, password: loginPassword }),
     ); // dispatch login
   };
 
@@ -76,7 +76,7 @@ const LoginRegister = () => {
         email: registerEmail,
         password: registerPassword,
         role: "user",
-      })
+      }),
     ); // dispatch registration
   };
 
@@ -96,7 +96,7 @@ const LoginRegister = () => {
     <div className="min-h-screen w-full flex justify-center items-center p-4 relative overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('/src/assets/images/bkg26.jpg')` }}
+        style={{ backgroundImage: `url('/bkg26.jpg')` }}
       />
 
       <div
